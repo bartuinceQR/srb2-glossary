@@ -1,0 +1,45 @@
+---
+title: 'Bit Math'
+description: 'Basically the building block of Object flags.'
+---
+
+Bits are 0s and 1s, the “binary” language you hear about a lot. It’s very similar to our daily usage of digits, it only goes up to 1 instead of 9.
+
+0 1 2 3 4 5 6 7 8 9 10 11 12… normal
+0 1 10 11 100 101 110  binary
+
+Knowing the exact values of numbers in binary isn’t really relevant to Lua, but it IS important to know for bit mathematics.
+
+Treat binary numbers like they’re normal numbers, just use “2” when you would use “10”. 110 isn’t 10^2 + 10^1 + 0, for example. It’s 2^2 + 2^1 + 0, which is 6.
+
+```x << 3``` means shifting x three digits to the left, which means adding three 0s to its right. This is the same as multiplying it by 2^3 = 8. Very similar to how we multiply by 1000 to add three 0s in normal mathematics.
+
+```1110 (14 = 8 + 4 + 2)``` becomes ```1110000 (112 = 64 + 32 + 16)```.
+
+x >> 3 means shifting x three digits to the right, which means removing the last three digits, regardless of their value. This is the same as dividing it by 2^3 = 8. Yes, this means we can lose accuracy in our number, that’s the truth of math without complicated floating point stuff.
+
+1010 (10) becomes 1 (1). Divided by 8, the result is 1, and the remainder (2) is lost forever.
+
+
+Upper / Lower Bits
+When a SOC Action makes mention of Upper / Lower 16 bits, it’s referring to values over and under 65536, respectively.
+
+If you enter a value of “2048”, that’s the lower 16 bits.
+2048 is 2^11, so in binary, we can represent it with a 1 followed by eleven zeroes. Sort of like how we represent
+
+0000 0000 0000 0000 0000 1000 0000 0000 
+
+If you enter a value of “2048 \<\< 16”, you shift it 16 digits to the left, which is the same as multiplying it by 2^16, which is 65536. At this point:
+
+0000 1000 0000 0000 0000 0000 0000 0000 
+
+2048 has become your UPPER value.
+If you want an upper value of 1, and a lower value of 2048, for example, you would write:
+
+2048 + 1 \<\< 16
+
+Alternatives:
+The constant FRACBITS seems to be designed for this purpose. 
+The expressions 3 \<\< 16 and 3 \<\< FRACBITS are exactly the same thing.
+The constant FRACUNIT is 65536, which equals 1 \<\< 16. 
+The expressions 3 \<\< 16 and 3 * FRACUNIT are also exactly the same thing.
