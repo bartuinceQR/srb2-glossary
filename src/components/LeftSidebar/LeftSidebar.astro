@@ -11,6 +11,7 @@ const currentPageMatch = currentPage.endsWith('/')
   ? currentPage.slice(1, -1)
   : currentPage.slice(1)
 const langCode = getLanguageFromURL(currentPage)
+
 const sidebar = SIDEBAR[langCode]
 ---
 
@@ -22,7 +23,8 @@ const sidebar = SIDEBAR[langCode]
           <div class="nav-group">
             <h2>{header}</h2>
             <ul>
-              {children.map((child) => {
+              {
+                children.map((child) => {
                 const url = Astro.site?.pathname + child.link
                 return (
                   <li class="nav-link">

@@ -15,7 +15,6 @@ export const OPEN_GRAPH = {
 }
 
 export const KNOWN_LANGUAGES = {
-  //Deutsch: 'de',
   English: 'en'
 } as const
 export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES)
@@ -36,14 +35,6 @@ export type Sidebar = Record<
   Record<string, { text: string; link: string }[]>
 >
 export const SIDEBAR: Sidebar = {
-  /*de: {
-    Überschrift: [
-      { text: 'Einführung', link: 'de/introduction' },
-      { text: 'Seite 2', link: 'de/page-2' },
-      { text: 'Seite 3', link: 'de/page-3' }
-    ],
-    'Ein weiterer Abschnitt': [{ text: 'Seite 4', link: 'de/page-4' }]
-  },*/
   en: {
     'Introduction': [
       { text: 'Introduction', link: 'en/introduction' },
