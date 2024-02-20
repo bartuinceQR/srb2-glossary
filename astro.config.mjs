@@ -8,5 +8,6 @@ import sitemap from '@astrojs/sitemap'
 export default defineConfig({
   integrations: [mdx(), preact(), react(), sitemap()],
   base: `/`,
+  output: "static",
   site: `https://bartuinceqr.github.io`
 })
