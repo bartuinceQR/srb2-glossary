@@ -7,6 +7,6 @@ import sitemap from '@astrojs/sitemap'
 
 export default defineConfig({
   integrations: [mdx(), preact(), react(), sitemap()],
-  base: `/srb2-glossary`,
+  base: `/`,
   site: `https://bartuinceqr.github.io`
 })
