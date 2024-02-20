@@ -4,5 +4,9 @@
     "jsx": "preserve",
     "skipLibCheck": true,
     "strictNullChecks": true
-  }
+  },
+  "include": [
+    "src/**/*",
+    "index.d.ts",   // declaration file path
+  ],
 }
