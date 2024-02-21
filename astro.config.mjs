@@ -9,7 +9,7 @@ export default defineConfig({
   image: {
     service: passthroughImageService(),
   },
-  site: 'https://bartuinceQR.github.io/',
+  site: 'https://bartuinceQR.github.io/srb2-glossary/',
   integrations: [mdx(), preact(), react(), sitemap()],
   output: "static",
   build:{
