@@ -1,6 +1,6 @@
 export const SITE = {
   title: 'SRB2 Lua Glossary',
-  description: 'The world\'s dumbest lookup table',
+  description: 'A way to quickly check up on SRB2 related Lua troubles.',
   defaultLanguage: 'en-us'
 } as const
 
@@ -37,10 +37,10 @@ export type Sidebar = Record<
 export const SIDEBAR: Sidebar = {
   en: {
     'Introduction': [
-      { text: 'Introduction', link: 'en/introduction' },
+      { text: 'Introduction', link: 'srb2-glossary/en/introduction' },
     ],
     'Essential Math': [
-      { text: 'Bit Math', link: 'en/basics/bitmath' }
+      { text: 'Bit Math', link: 'srb2-glossary/en/basics/bitmath' }
     ]
   }
 }
