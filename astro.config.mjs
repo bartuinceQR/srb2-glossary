@@ -9,8 +9,10 @@ export default defineConfig({
   image: {
     service: passthroughImageService(),
   },
+  site: 'https://bartuinceQR.github.io/',
   integrations: [mdx(), preact(), react(), sitemap()],
-  base: `/`,
   output: "static",
-  site: `https://bartuinceqr.github.io`
+  build:{
+    site: 'https://bartuinceQR.github.io/',
+  }
 })
