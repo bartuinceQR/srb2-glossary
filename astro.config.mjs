@@ -13,6 +13,6 @@ export default defineConfig({
   integrations: [mdx(), preact(), react(), sitemap()],
   output: "static",
   build:{
-    site: 'https://bartuinceQR.github.io/',
+    site: 'https://bartuinceQR.github.io/srb2-glossary/',
   }
 })
