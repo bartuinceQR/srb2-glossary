@@ -40,7 +40,14 @@ export const SIDEBAR: Sidebar = {
       { text: 'Introduction', link: 'srb2-glossary/en/introduction' },
     ],
     'Essential Math': [
-      { text: 'Bit Math', link: 'srb2-glossary/en/basics/bitmath' }
-    ]
+      { text: 'Bit Math', link: 'srb2-glossary/en/basics/bitmath' },
+      { text: 'FRACUNIT', link: 'srb2-glossary/en/basics/fracunit' },
+      { text: 'Flags, AND/OR', link: 'srb2-glossary/en/basics/flags' }
+    ],
+    'About Lua': [
+      { text: 'Hooks and Functions', link: 'srb2-glossary/en/lua/functions' },
+      { text: 'Rawset', link: 'srb2-glossary/en/lua/rawsets' },
+      { text: 'Save/Load', link: 'srb2-glossary/en/lua/saveload' },
+    ],
   }
 }

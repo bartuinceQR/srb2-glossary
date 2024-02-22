@@ -1,0 +1,10 @@
+---
+title: 'FRACUNIT'
+description: 'One pixel.'
+---
+
+Description from the SRB2 Wiki (https://wiki.srb2.org/wiki/Glossary#Fracunit)
+
+“A fracunit is a unit of distance measurement used in SRB2. Certain actions and Object properties use a more precise distance measurement, where one unit equals 1/65536th of a fracunit. In these contexts, SOCs and Lua scripts often supply the value in fracunits and then multiply them with the constant "FRACUNIT", in all-capital letters. This constant has a value of 65536, and thus converts the value from fracunits to the more precise distance unit. For example, an Object size of "2\*FRACUNIT" means that the Object has a size of two fracunits, or 2*65536 = 131072 smaller units.”
+
+Essentially a form of measurement meant to be more precise than regular numbers, as Doom’s integer math does not allow fractions (I’m sure internal calculations still involve fixed point math, this was probably done for performance reasons). You can’t do ½ in Lua, for example, but you CAN do FRACUNIT / 2, which is 0.5 units of in-game distance. Distances, angles, objects’ physical properties all make use of FRACUNITs.

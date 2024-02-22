@@ -1,0 +1,117 @@
+---
+title: 'Functions'
+description: 'Do not use these for your first mod.'
+---
+
+## PAGE IS WORK IN PROGRESS
+
+You might have noticed that SRB2 enforces a strict “local” definition on every variable or function you create. This is mainly for safety purposes, acting as a barrier that prevents it from conflicting with other Lua files that could be added simultaneously with your own code. There is, however, one way to circumvent this, via using the rawset function.
+
+The rawset function allows whatever you define to be accessed OUTSIDE of the script it resides in. This is very helpful for various reasons:
+
+- It allows cross-mod compatibility by checking if certain global variable names have been defined when being loaded (srb2p is an example). Of course, mod makers will need to watch out for the ORDER of loading mods. If your character only checks for a global variable on load, and it’s loaded BEFORE the thing that has that global variable, it’ll simply not work.
+
+- It allows for cleaner code. You can split your code into multiple Lua files, knowing that any variable that needs to be used in multiple files can simply be rawset prior to usage, keeping your code structure tidy.
+
+`rawset(_G, “GloballyUsedName”, object)`
+
+Let’s examine every single factor in this function.
+
+rawset itself is the function we are calling. It takes three arguments: One for the table we are adding our variable to, one for the name we are going to refer to it when accessing it from elsewhere, and one for the object that is being shared around. More info on those below.
+
+_G is Lua’s own global namespace variable. When creating a rawset, this is ALWAYS the table that has to be referred to in order to make your variable visible to other scripts. There are a few other namespace variables involving Lua, but it is highly doubtful that any use case will be made for them.
+
+“GloballyUsedName” is the name we choose for our object. The name you pick for this string is how you will refer to the object when calling it. It is in the same vein of doing
+
+```
+local coolVariable = 3
+print(coolVariable)
+```
+
+if we were to do
+
+```
+rawset(_G, “coolVariable”, 3)
+print(coolVariable)
+```
+
+we would get the exact same result. Keep in mind that the quotation marks (“”) are there to define it as a name entry for the global namespace table, and should NOT be used when calling the rawset value itself.
+
+object is what we want to put in the variable that we define in the rawset. This could be absolutely anything. A number, a string, a table, a function with an indefinite amount of arguments. Anything that you could create with a “local” call can also be defined here.
+
+Methods for creating a rawset:
+
+Rawset has exactly one function associated with it, so do not worry about wondering if there are other ways to create a rawset. A rawget method also exists, but there is no practical usage for it unless you’re involving yourself with complex metatables.
+
+```
+local TestVariable = 45
+rawset(_G, “TestVariable”, TestVariable)
+```
+
+You can define a local object, then pass that on to the rawset function. Note that you do NOT have to give it the same name as the local object’s name.
+
+```
+local TestVariable = 45
+rawset(_G, “ChangedVariable”, TestVariable)
+```
+
+This will also work fine. Bear in mind that you have to ask for ChangedVariable when accessing this object, NOT the TestVariable name you used when first defining the object.
+
+
+>A minor pitfall:
+If you need to access your variable/object on the SAME script that you defined the rawset in, accessing either one of TestVariable and ChangedVariable will work, considering they are both defined in the script. Do not mistake this as your original naming scheme being global.
+
+You can also define the object directly. 
+
+`rawset(_G, “TestVariable1”, 45)`
+
+`rawset(_G, “TestVariable2”, “henlo”)`
+
+`rawset(_G, “TestVariable3”, MT_BLUECRAWLA)`
+
+Additionally, you can define it as a table or a function.
+
+```
+rawset(_G, “TestVariable4”, {3, 4, 5})
+rawset(_G, “TestVariable5”, function(mo)
+	print(“This mobj’s type is: ” + mo.type)
+end)
+```
+
+For the function one, you treat it like a function when calling it, as expected.
+
+
+```
+local function ThinkerExample(mo)
+	TestVariable5(mo)
+end
+```
+
+`addHook(“MobjThinker”, ThinkerExample, MT_BLUECRAWLA)`
+
+
+#### Note about table behaviour:
+When you define a table in rawset, you provide a REFERENCE to it. That means any changes done to the table are reflected in any subsequent accesses to that table.
+
+
+`rawset(_G, “TestTable”, {3, 4, 5})`
+
+In Lua script Example1.lua
+
+```
+local myTable1 = TestTable
+myTable1[2] = 8
+```
+
+We have set the second element of the ORIGINAL table to 8.
+
+In Lua script Example2.lua
+
+```
+local myTable2 = TestTable
+print(myTable2[2])
+```
+
+This will print 8, NOT 4 as you would expect. Pointing a local variable to a table does NOT create a copy that you can freely play around with, it also changes the original.
+
+Note that this applies to all tables, NOT just ones defined in rawsets! I just felt the need to explain it here because you are much more likely to encounter issues with external modification when accessing a table from multiple scripts.

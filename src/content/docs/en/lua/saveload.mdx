@@ -1,0 +1,23 @@
+---
+title: 'I/O Operations'
+description: 'Where is my JSON parser?'
+---
+
+## PAGE IS WORK IN PROGRESS
+
+Though for now, my advice for saving/loading would be to keep a table of variables and exclusively apply save/load operations on that. 
+
+Saving:
+For each key/value pair ( table[“valuename”] = value, where “valuename” is the key and value is the value), you could write one line in your local save file that is defined as “key:value”, resulting in your save file looking something like this:
+
+key1:value1
+key2:value2
+key3:value3
+
+Loading:
+Read the file back by iterating over it file line by line (lua comes with an iterator function that lets you do exactly that, called .lines(), and splitting each line with a “:” delimiter so you get both the key and the value back. (string.gmatch(readstring, "[^:]+"), but this is equally psychotic and probably deserves its own section)
+
+I’m aware that sounds complicated, I’ll probably just straight up put an example here when I get around to it.
+
+http://lua-users.org/wiki/IoLibraryTutorial 
+This website has a more extensive list of Lua I/O functions than what the SRB2 Wiki has to offer.
