@@ -5,21 +5,70 @@ description: 'This wasn''t meant to be a programming tutorial...'
 
 ## PAGE IS WORK IN PROGRESS
 
+## Functions
+
+What is a function, exactly? It is essentially every block of code that performs an action.
+
+`local variable = 3`
+
+This is called a "definition". You create a variable, and you "define" its value. This value can later be changed by either direct assignment, or operations.
+
+```
+local function DoThing(number)
+	variable = variable + number
+end	
+```
+
+This is called a "function". These are what you use to cause changes in the game. Everytime you "call" this function, either by doing it by hand or by attaching it to a hook, it does everything written inbetween the first and last lines. In our case, the "variable" we defined above would increase by "number" every time we called this function.
+
+You might have noticed we wrote the "number" value inside parentheses when defining the function. That is called an "argument", and its name *does not matter*. It can be anything you want, as long as you don't start it with a number or use special characters. I could have named it "value", "adder", "funnypizzatower", and the result would be the exact same as long as I used the **same name** inside the function block as well.
+
+```
+local function DoThing(value)
+	variable = variable + value
+end	
+```
+
+```
+local function DoThing(adder)
+	variable = variable + adder
+end	
+```
+
+These all do exactly the same thing. The only thing important about these arguments is that you know what "type" they are. Are they a number? A string? A table? Since Lua does not let you define these beforehand, you sort of have to "remember" what you want to use them for.
+
+A function can have as many arguments as you want.
+
+The most important thing to note is that DEFINING a function is different from CALLING a function.
+
+```
+local function PrintMyNumber(objecttype)
+	print(objecttype)
+end
+
+PrintMyNumber(MT_BLUECRAWLA)
+```
+
+Here, I have *defined* a function first, using argument names that *I* have decided. Then, I *called* that function by providing it with an argument of my choice. (In SRB2, the MT_ constants are just numbers, so I'm essentially telling the function to print a number). Only provide constants/numbers/variables to functions when **calling** them.
+
+## Hooks
+
 If you’ve ever messed around with the SRB2’s Lua pages, you’ve hopefully noticed the Hooks page. Here, you might have seen a definition that looks like this:
+
 Hook format: `addHook("MobjThinker", functionname, [int objecttype])`
+
 Function format: `function(mobj_t mobj)`
+
 Function return value: `Boolean (override default behavior?)`
 
 
 Hooks essentially provide the basis for the main way of interacting with the game, but what do each of these mean?
 
 
-Hook Format:
+### Hook Format:
 The “addHook” function built inside SRB2, is what allows you to connect your function to a step in the game’s process, quite literally “hooking” it into the game loop. This step can be many things: Processing inputs, running the logic of a particular enemy on the map, drawing on the HUD… Each of these steps come with their own name for their hooks.
 
-
-For example, “MobjThinker”, the example provided above, is run every frame, during the step of the game that loops through each Mobj (map object, basically every “thing” that is spawned on the map when you load it), and runs their Thinkers. Most of the time, this’ll just update their SOC states and not do much else, but more complex enemies have specialised Thinkers that are not normally accessible either by Lua or SOC. The most important part is where our hook comes in. When we attach a hook into that step, it runs before the game does its usual thing, allowing us to precede the game’s logic with our own.
-
+For example, “MobjThinker”, the example provided above, is run every frame, once for every Mobj (map object, basically every “thing” that is spawned on the map when you load it). Most of the time, this will simply update their states, but more complex enemies have specialised Thinkers that are not normally accessible either by Lua or SOC. The most important part is where our hook comes in. When we attach a hook into that step, it runs before the game does its usual thing, allowing us to precede the game’s logic with our own.
 
 When we add the hook, we write the type of the hook (“MobjThinker”), and we provide the name of the function that will be inserted into the hook.
 
@@ -31,28 +80,44 @@ end
 
 The name of the function would be TestFunction in this case, written without quotes, as we want to pass the function itself as an argument, not its string name.
 
+One thing of note is that the argument is "mo". Again, this could have been any name I desired. However, "mo" is preferred when working with functions that take "Mobjs" as arguments. MobjThinker is a hook that runs a function with only a Mobj as an argument, so our function has to fit the same format.
 
 The third argument, surrounded by [square brackets], is optional. It accepts an object type, such as MT_RING or MT_EGGMOBILE2. This allows you to apply this hook to only a certain object type, so that you do not have to manually check for the object type inside the function every frame. If you want to apply it to multiple objects, you’ll still need to write an “addHook” line for each of them, or run a “for” loop. No way to do it in a single line, apologies. If this argument is left blank, the function will apply to every single Mobj, including ones that are created after loading the map.
 
 
-Quick Note:
-MF_NOTHINK will prevent a MobjThinker function from running.
+An example of our final result would be:
+```
+addHook("MobjThinker, TestFunction, MT_BLUECRAWLA)
+addHook("MobjThinker, TestFunction, MT_REDCRAWLA)
+addHook("MobjThinker, TestFunction, MT_GFZFISH)
+```
+
+**Quick Note: MF_NOTHINK will prevent a MobjThinker function from running.**
 
 
-Function Format:
+### Function Format:
 When you add a hook, you need to follow the function format exactly. Adding fewer arguments than what is given will not work. Adding more arguments than what is given MIGHT work on the surface, but is very unhealthy to try and should be avoided.
+
+Each hook has its own 
+
 MobjThinker is very simple. As it applies itself upon a single Mobj, it requires exactly one argument, which is the Mobj that will be affected.
 This does not mean that you need to find a Mobj on the map and give it to the function. The hook handles that part itself. You simply need to make sure that you treat your argument like a Mobj.
+
 https://wiki.srb2.org/wiki/Lua/Userdata_structures
 Without getting into specifics, “treating it like a Mobj” means that you need to be mindful of the “mobj_t” table found on the link above. You can change its x,y,z position, flags, height etc. What you CANNOT do is try to access “mo.cmd.buttons”, for example. cmd is in the player table, NOT available to Mobjs. You can, of course, CREATE a field in your Mobj called “cmd”, then edit it later. You simply need to be mindful of what you do have. That’s the biggest benefit of Lua modification. You can expand the tables of mostly anything.
 
 ```
 local function TestFunction(mo)
 	print(“X position : “ .. tostring(mo.x))
+	if not (mo.customfield) then
+		mo.customfield = 0
+	else 
+		mo.customfield = mo.customfield + 1
+	end
 end
 ```
 
-This makes any Mobj with this hook attached print its X position every frame. Since the x coordinate is part of the Mobj table, we can freely access it.
+This makes any Mobj with this hook attached print its X position every frame. Since the x coordinate is part of the Mobj table, we can freely access it. It also creates a "customfield" field for the Mobj. It first checks whether it has that field or not. If it doesn't, it creates it. If it already has it, it increments the field's value by 1. Since this is for a MobjThinker hook, and that runs every frame, the customfield value will increase every frame after being created.
 
 
 Quick Note:
@@ -60,15 +125,18 @@ If you are working with the Mobj of a player, you can access their player table 
 
 
 Of course, not all hooks are this simple. 
+
 `function(mobj_t target, mobj_t inflictor, mobj_t source, int damage, int damagetype)`
+
 This is the function format for MobjDamage. At first glance, it might be intimidating. You need a mobj of “target”, “inflictor” and “source”, and two additional arguments for damage and the type of damage. The last two are relatively easy to understand, they are how much damage the mobj has taken, and what KIND of damage it has taken, respectively. You can increase/decrease/nullify the damage taken inside the function freely. For the first three, keep in mind that they’re still Mobjs, despite what we call them in the function format. The “target” is the victim being hurt. The reason for “inflictor” and “source”s existence is due to projectiles. Fang’s corks are the inflictor, Fang is the source. Same goes for most enemies who throw projectiles.
 
 
-> Quick Note:
-The source is decided by the inflictor’s target. In a confusing mess of decision making, Doom’s projectiles follow logic such that they CANNOT hurt their target, that’s why their target is always set to the one who spawns them.
+<h4>Quick Note:</h4>
+The source is decided by the inflictor’s target. In Doom, a projectile's target is the one who **fired** it. As such, projectiles cannot hurt their *targets*, ironically enough.
 
 
->Quick Note:
+### Argument Order:
+
 **THE ORDER OF ARGUMENTS IN THE FUNCTION FORMAT ARE IMPORTANT.**
 
 ```
@@ -83,18 +151,17 @@ local function TestMobjDamageFunction(inflictor, target, source, dmg, dmgtype)
 end
 ```
 
-The first function will print the inflictor’s z position. The second function will print the target’s z position, as it’s ALWAYS the first argument in the function for the hook. What name you give it inside the function definition does not matter to the game itself. It’s only important for you to remember what each argument does.
+Carefully look at the argument names in these two functions. Both of these are technically correct ways to write a function, neither will produce errors. However, if we want to attach these to a MobjDamage hook, the second one will be much harder to navigate, for reasons explained below.
 
-```
-local function TestMobjDamageFunction(target, dmgtype, source, dmg, inflictor)
-	print(“Z position : “ .. tostring(inflictor.z))
-end
-```
+The first function will print the inflictor’s z position. The second function will print the target’s z position. 
 
-This one’s just silly. It’ll give an error, as the “inflictor” is actually the damagetype field, which is a number with no “z” field to speak of.
+`function(mobj_t target, mobj_t inflictor, mobj_t source, int damage, int damagetype)`
+
+When connecting a function to MobjDamage, it ALWAYS treats the first argument as the target that is getting hurt. It does not matter what the Lua coder writes there as a name. As far as the game is concerned, for that second function, the target is just someone who's called "inflictor". It will still be treated as a target.
+
+Again, keep in mind that this is simply a matter of the coder knowing what to do. If you felt like calling the first argument "dummy", it would be perfectly fine as long as you used "dummy" for every part in your function that was referring to the target.
 
 
-Function Return Value:
-
+<h4>Function Return Value:</h4>
 
 You might have noticed some functions “return true” or “return false”. For functions connected to hooks, these return values have special properties. For example, for “MobjThinker”, returning true means we want to COMPLETELY override whatever that object’s original Thinker is. For something like ShouldDamage, however, the return value decides whether the damage process should be started, with “return nil” letting the game’s default checks do the work instead. These return values are not mandatory, but can be helpful for overriding default mechanics that can be considered counterintuitive, such as bosses moving to their PainState every time they are hit, resetting their attack cycle.
