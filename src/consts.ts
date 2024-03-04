@@ -46,6 +46,7 @@ export const SIDEBAR: Sidebar = {
     ],
     'About Lua': [
       { text: 'Hooks and Functions', link: 'srb2-glossary/en/lua/functions' },
+      { text: 'Hook Examples', link: 'srb2-glossary/en/lua/hookexamples' },
       { text: 'Rawset', link: 'srb2-glossary/en/lua/rawsets' },
       { text: 'Save/Load', link: 'srb2-glossary/en/lua/saveload' },
     ],

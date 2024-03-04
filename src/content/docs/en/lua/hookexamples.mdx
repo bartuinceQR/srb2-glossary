@@ -1,0 +1,34 @@
+---
+title: 'Hook Examples'
+description: 'One of each! One of each!'
+---
+
+Every code block in this page can be plugged into a Lua file. Have fun! Play around with each one of them! Try to change variables around. 
+
+### MobjThinker
+
+```
+local function SillyCrawlaJump(mo)
+    local force = 20*FRACUNIT
+    local jumpheight = 16*FRACUNIT
+
+    if (leveltime % (5*TICRATE) == 0) then
+        mo.momz = jumpheight
+        for i = 1,8 do
+            local angle = ANGLE_45 * (i-1)
+            local xoffset = P_ReturnThrustX(mo, angle, force)
+            local yoffset = P_ReturnThrustY(mo, angle, force)
+            P_SpawnMobj(mo.x + xoffset, mo.y + yoffset, mo.z, MT_DUST)
+        end
+    end
+end
+
+addHook("MobjThinker", SillyCrawlaJump, MT_BLUECRAWLA)
+addHook("MobjThinker", SillyCrawlaJump, MT_REDCRAWLA)
+```
+
+This codeblock makes Blue Crawlas and Red Crawlas jump every 5 seconds. "TICRATE" is a constant, always equal to 35 in SRB2, 35 tics equaling one second of real time. We don't write 35 directly, because the value itself can always change in the future, and if it does, us writing "35" will be obsolete, while TICRATE itself will change to suit our needs. 
+
+When they jump, they will also create 8 dust particles around them. That is what the `for i = 1,8` block is for. It loops the block inside 8 times. Each loop, it chooses an angle (0, 45, 90, 135, 180, 225, 270, 315), gets the X and Y values for a certain distance from that angle (20 FRACUNITs, as decided at the start of the function), and creates a dust object at that position.
+
+These functions might seem a little overbearing. Try to think of it as a circle as seen from above. It has a radius of 20 FRACUNITs. The Crawla is the center. You drag 8 lines in 45 degree increments, and put a dust at the end of each one. P_ReturnThrustX/Y let you get the horizontal and vertical values of those drawn lines. Don't worry if it's still complex, as you do more trigonometry it will eventually settle into place. 
