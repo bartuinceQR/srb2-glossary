@@ -3,91 +3,146 @@ title: 'Flags and AND/OR Operations'
 description: 'All the MF and PF prefixes'
 ---
 
-## PAGE IS WORK IN PROGRESS
-
 Frequently, you can see operations like “if player.cmd.buttons & BT_CUSTOM1”. But what does that & do? 
 
-It follows the bit logic we discussed earlier, of course! True to its name, it compares one bit of one value and one bit of the other value, and checks if they are both 1s.
+It follows the bit logic we discussed earlier, of course! 
+
+The ampersand (&) is an operation like plus, minus, multiply and divide, called the AND operation. It applies a certain calculation between two numbers. Unlike the math we are used to, however, these two numbers are represented in binary. The pipe (|) is also an operation between two binary numbers, called the OR operation.
+
+What does this have to do with SRB2 code, then? The truth is, most "flags" in the game prefer to be stored this way. Those `MF_SPECIAL|MF_SOLID` flags you see in object definitions? The button values ` BT_CUSTOM1|BT_SPIN` ? They are all combinations of bits. They are also all powers of 2.
+
+`1 -> 0000 0001`
+
+`2 -> 0000 0010`
+
+`4 -> 0000 0100`
+
+`8 -> 0000 1000`
+
+This is what makes them special. When you do an AND or OR operation for two ingame flags, you only do an operation for ONE digit on each value. This is how you can see if you have a particular flag or not.
+
+
+<h3>The AND Operation</h3>
+
+True to its name, the ampersand, or AND operator, compares each bit of the two values, bit by bit. If both bits are 1, the result's bit is also 1. This is repeated for each digit of the two binary numbers.
+
+```
 0100 0011
 0011 1111
 ________&
 0000 0011
+``` 
 
-A simplified way to understand this would be to consider it a logic puzzle.
 -If “A” is true and “B” is true, only THEN will “C” be true.
 
-The “or” operation, | , follows the same principle, but instead of checking A AND B are true, it checks if A OR B are true.
+The AND operation retis completely harmless when used against “1”s, simply returning the result you put in. This means every bit will remain unchanged, EXCEPT for where the flag bit used to be, which will be forced into being 0, removing the flag if it existed in our number. If it wasn’t there, nothing happens. 
 
-0100 0011
-0011 1111
-________|
-0111 1111
+Example:
+**The 8 bits here are an example, the actual number is way larger (32 bits for most flag based variables)**
 
--If “A” is true or “B” is true, only THEN will “C” be true.
-
-
-What does this have to do with SRB2 code, then? The point is, most “flags” in the game, whether it be object flags, button presses, player flags, are stored in individual bits, so that they may each be separately checked with the AND operation without clashing with each other.
-
+```
 PF_GODMODE -> 16 -> 0001 0000
-PF_NOCLIP -> 32      ->  0010 0000
+player.pflags -> 23 -> 0001 0111
 
-The 8 bits here are an example, the actual number is way larger (should be 32 bits)
+0001 0111
+0001 0000
+________&
+0001 0000
 
-PF_FORCESTRAFE -> 268435456 -> 0001 0000 0000 0000 0000 0000 0000 0000
-The AND operation
+```
 
-The player field that checks these flags, player.pflags, is also an integer value, and it can have any number of these flags. To find if we have a PARTICULAR flag, we use the AND operation to essentially filter it out and see if the result is positive.
+From here, we can see that the player does indeed have the PF_GODMODE flag! PF_GODMODE's value equates to the 5th bit being active (2 <sup>(5-1) </sup> equals 16), and player.pflags has its 5th bit active, as seen by the binary representation. The AND operator allows us to see this without needing to check binary values ourselves.
 
-player.pflags -> 23 ->       0001 0111
+Another Example:
+```
 PF_AUTOBRAKE -> 8 -> 0000 1000
+player.pflags -> 23 -> 0001 0111
 
 0001 0111
 0000 1000
 ________&
 0000 0000
+```
 
-The player does NOT have the PF_AUTOBRAKE flag! That would make sense, since the flag numbers are 1 + 2 + 4 + 16, which correspond to four other pflags. (https://wiki.srb2.org/wiki/Constants#Internal_player_flags)
+The player does NOT have the PF_AUTOBRAKE flag! That would make sense, as the 4th bit is not active on player.pflags. 
 
-A Minor Pitfall:
+You can see a list of all player flags here. 
+(https://wiki.srb2.org/wiki/Constants#Internal_player_flags)
 
+
+Of course, there are flags for a lot more stuff, including:
+
+- Object flags
+- Object flags 2
+- Object special flags
+- Mapthing flags (the ones you place in Zone Builder)
+- Player button inputs
+- Damage types
+- Frame settings
+- Render flags
+- Translucency levels
+- Sector special flags
+
+And more! Check out the wiki page above to see their values.
+
+<h4>A Minor Pitfall:</h4>
+```
 player.pflags & (PF_FLAG1 | PF_FLAG2) will return true if EITHER of those flags are enabled, not BOTH of them.
-
 player.pflags & (PF_FLAG1 & PF_FLAG2) will NEVER return true.
+If you wish to check if exactly ONE of multiple flags is enabled, try this:
+player.pflags & (PF_FLAG1 | PF_FLAG2) == PF_FLAG1
+player.pflags & (PF_FLAG1 | PF_FLAG2) == PF_FLAG2
+```
 
-Simply check for multiple conditions separately. There IS a way to make it a single line, but it involves hard-to-read negation notations, so try to avoid it.
+<h3>The OR Operation</h3>
 
-The OR Operation
+The “OR” operation, | , follows the same principle as the & operation., but instead of checking A AND B are true, it checks if A OR B are true.
 
-On the other hand, the | operation is much simpler. It only exists to add a flag to a number. If it already has that flag, then this operation does nothing, and is completely harmless.
+``` 
+0100 0011
+0011 1111
+________|
+0111 1111
+``` 
 
-player.pflags -> 23 ->       0001 0111
+-If “A” is true or “B” is true, only THEN will “C” be true.
+
+The | operation is much simpler when it comes to calculation. It only exists to add a flag to a number. If it already has that flag, then this operation does nothing, and is completely harmless.
+
+If you OR a 0 and 1, you get 1. If you OR a 1 and 1, you still get 1. Therefore, the result is unaffected.
+
+```
 PF_AUTOBRAKE -> 8 -> 0000 1000
-
+player.pflags -> 23 -> 0001 0111
 0001 0111
 0000 1000
 ________|
 0001 1111
+```
 player.pflags now includes PF_AUTOBRAKE! If it already had it, the result would have been exactly the same.
 
-A Minor Pitfall:
 
-The & operation is for checking, the | operation is for setting. Usually, you’ll want to do,
+<h4>A Minor Pitfall:</h4>
+```
+The & operation is for checking, the | operation is for setting. If you do:
 
-player.pflags = $ | PF_FLAG1
+player.pflags = player.pflags | PF_FLAG1
 
-Changing the value of the field.
+You will add the flag to yourself. However, if you do:
 
-player.pflags = $ & PF_FLAG1
+player.pflags = player.pflags & PF_FLAG1
 
-Would result in you either ONLY having FLAG1 if you already had it, or NO flags if you didn’t. 
+Would result in you either ONLY having FLAG1 if you already had it, or NO flags if you didn’t.
+This is because it assigns the result of the operation to you directly.
+```
 
-Negation:
+<h3>Negation</h3>
 
-player.pflags = $ & ~PF_FLAG1
+player.pflags = player.pflags & ~PF_FLAG1
 
 Would result in ONLY FLAG1 being removed from you.
 
-Let’s pretend PF_FLAG1 = 0010 0000
-Then its inverse would be = 1101 1111
+Let’s pretend `PF_FLAG1 = 0010 0000`.
 
-The AND operation is completely harmless when used against “1”s, simply returning the result you put in. This means every bit will remain unchanged, EXCEPT for where the flag bit used to be, which will be forced into being 0, removing the flag if it existed in our number. If it wasn’t there, nothing happens. 
+Then its inverse would be  `~PF_FLAG = 1101 1111`
+
