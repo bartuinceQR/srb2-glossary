@@ -27,8 +27,52 @@ addHook("MobjThinker", SillyCrawlaJump, MT_BLUECRAWLA)
 addHook("MobjThinker", SillyCrawlaJump, MT_REDCRAWLA)
 ```
 
+MobjThinker is run once per frame of every mobj that matches the type given in the `addHook` function. If no type is given, it will apply to every mobj that does not have MF_NOTHINK.
+
 This codeblock makes Blue Crawlas and Red Crawlas jump every 5 seconds. "TICRATE" is a constant, always equal to 35 in SRB2, 35 tics equaling one second of real time. We don't write 35 directly, because the value itself can always change in the future, and if it does, us writing "35" will be obsolete, while TICRATE itself will change to suit our needs. 
 
 When they jump, they will also create 8 dust particles around them. That is what the `for i = 1,8` block is for. It loops the block inside 8 times. Each loop, it chooses an angle (0, 45, 90, 135, 180, 225, 270, 315), gets the X and Y values for a certain distance from that angle (20 FRACUNITs, as decided at the start of the function), and creates a dust object at that position.
 
 These functions might seem a little overbearing. Try to think of it as a circle as seen from above. It has a radius of 20 FRACUNITs. The Crawla is the center. You drag 8 lines in 45 degree increments, and put a dust at the end of each one. P_ReturnThrustX/Y let you get the horizontal and vertical values of those drawn lines. Don't worry if it's still complex, as you do more trigonometry it will eventually settle into place. 
+
+### PlayerThink
+
+Similar to MobjThinker, PlayerThink runs once per frame for each player. This code still runs if the player is spectating or dead, so make sure to check for the proper conditions.
+
+Code example coming soon!
+
+### ThinkFrame
+
+Runs once before every other thinker is run. It takes no arguments, and is therefore more useful for situations where you need to run a global counter, or need to iterate over something other than players or mobjs, such as linedefs (Do not do this.). You might have seen some code use ThinkFrame to iterate over all players. That is a relic from 2014, back when `PlayerThink` did not exist yet.
+
+Code example coming soon!
+
+### MobjDamage
+
+Ran when a mobj takes damage. If used on a mobj with more than 1 health, you can activate your own invulnerability code, or do something much sillier. Since most enemies die in one hit, this will be frequently used on either bosses or the player. Keep in mind that this works like MobjThinker, you have to define a type at the end of the `addHook` function. If you want it to work for the player, you'd add MT_PLAYER.
+
+Code example coming soon!
+
+### MobjLineCollide
+
+Ran when an object tries to move over a linedef. This one's a bit complex in usage, as changing the `return` behaviour of this hook makes the game "force" you to either get blocked by the line, or ignore it entirely. If you wanted to do something like... say, a wall jump, you would not mess with the `return` behaviour at all. You would simply look at the sector that the line is attached to, check if its height definitions mean that it is a "wall" to the mobj, and set the state to the wall jump state if that is the case. Keep in mind that this works like MobjThinker, you have to define a type at the end of the `addHook` function. If you want it to work for the player, you'd add MT_PLAYER.
+
+Code example coming soon!
+
+### AbilitySpecial
+
+This code runs whenever you try to press the jump button midair. It is the bread and butter of all character abilities. When you `return true` from this function, it will replace whatever existing ability you gave your character, allowing you to have completely custom abilities.
+
+Code example coming soon!
+
+### JumpSpecial
+
+Unlike AbilitySpecial, this hook is run as soon as you try to press the jump button. If you override default behaviour by making this function `return true`, you won't be able to jump normally at all. Additionally, it will run even if you aren't currently in a state where you can jump. It simply checks if the button is pressed, with the only exceptions being "in a hurt state" and "completed the level".
+
+Code example coming soon!
+
+### HUD
+
+Also known as `hud.add`, the HUD hook runs every time something has to be drawn onto the HUD, separate from the sprites you see in the game. There are various ways you can use this hook, depending on the last argument you give it. If you write `"game"` as the last argument, it will render for every frame you can see the default Score/Time/Rings HUD. If you write `"titlecard"`, it will render for a specified amount of time after the title card of the level is first displayed. You can decide on the amount of time it displays by yourself! There are more options as well.
+
+Code example coming soon!

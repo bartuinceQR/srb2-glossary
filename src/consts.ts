@@ -21,6 +21,7 @@ export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES)
 
 export const EDIT_URL = `https://github.com/advanced-astro/astro-docs-template/tree/main`
 
+export const SRB2_WIKI_URL = `https://wiki.srb2.org/wiki/Main_Page`
 export const COMMUNITY_INVITE_URL = `https://astro.build/chat`
 
 // See "Algolia" section of the README for more information.
