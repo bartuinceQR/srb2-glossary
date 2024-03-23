@@ -1,0 +1,48 @@
+---
+title: 'Helpful Links'
+description: 'Just call it the wiki link page.'
+---
+
+### Starting off
+
+If you're an absolute beginner to coding, then it might be a good idea to start with one of the many extremely useful resources about programming on the internet.
+
+[Complete beginner tutorial for programmers (Tutorialspoint) link](https://www.tutorialspoint.com/computer_programming/index.htm)
+
+Tutorialspoint is a great site if you want to immediately get started on the basics. It starts to taper off once you want to get into more technical features, as it tends to give very rigid examples for anything it teaches, and focuses on the result rather than the method.
+
+ However, **this is the most lenient part of learning programming**. You could very easily Google "Introduction to programming" and get many helpful Youtube videos along with plenty of interactive websites, such as LeetCode.
+
+### Lua specific
+
+If you have some familiarity with coding, but not Lua, Lua's official page happens to have some documentation!
+
+[Official Lua tutorial (Lua link)](https://www.lua.org/pil/1.html)
+
+Simply follow the buttons at the bottom to go through the many tutorials the site has to offer. It even includes tutorials about creating classes via prototyping, something that's used surprisingly rarely in most small-scale SRB2 mods.
+
+[Lua overview guide (Gamedevacademy link)](https://gamedevacademy.org/lua-programming-language-tutorial-complete-guide/)
+
+This one's more of a "pamphlet" than a guide, but it's nice to have easy access to the basics of Lua, such as types, tables, I/O operations, metatables.
+
+### The wiki
+
+If you've advanced past that stage as well, and can feel that you can at least write "functional" code in SRB2, then make sure to go through the official SRB2 Wiki first. Over the years, it seems to be lacking in documentation on newly added features, but it is still an **extremely** valuable source of information for any mod you want to do. The Pareto Principle says that 20% of the tools you have will serve 80% of your purpose, and that could not be any more correct when it comes to Lua. The "Functions" and "Hooks" pages alone will help you make your first 50 mods.
+
+[The Functions page (link)](https://wiki.srb2.org/wiki/Lua/Functions)
+
+Every action you call is a function. You can create your own functions, sure, but the game provides you with hundreds of functions that may or may not be interacting with the game code directly, being able to do something even you might not be able to do on your own.
+
+[The Hooks page (link)](https://wiki.srb2.org/wiki/Lua/Hooks)
+
+Already went over this in detail in the Hooks section (Still a work-in-progress), but Hooks are what make the game run, and it's nice to have a detailed explanation on what each hook does. While you can't create your own Hooks, the game provides plenty of them for almost every situation you can think of. Run when the player hits a wall? Run when the player presses a button? Run when the game needs to check for the player's height? Run when a map loads? There's a hook for all of those.
+
+[The Userdata Structures page (link)](https://wiki.srb2.org/wiki/Lua/Userdata_structures)
+
+Basically the unsung hero of Lua mods. Lua's biggest mistake is not letting you give a type to your variables when defining OR using them, so newcomers can very easily get confused on why their MT_RING is not a "valid mobj and doesn't have a health variable", as the game says. This page helps you understand what to expect from each type that you are working with. That "p" argument you see in every function? That's PROBABLY the player, so it makes sense for "p.rings" to be a real thing, since "rings" is part of the player_t structure. That hook that says it takes a "function of mobj_t" ? That means the "mo" in that function will be a mobj_t, so it'll make sense for it to have a "health" field. This one might take some getting used to, but with a bit of observation, you can figure out what everything you use in the game does/doesn't have.
+
+[The Constants page (link)](https://wiki.srb2.org/wiki/Constants)
+
+This page contains all the ALL CAPS named variables that you see in almost all mods (mostly TICRATE or FRACUNIT). It also lists many of the flags used in the game, for objects, players, rendering, sectors, HUD, etc. You don't need to memorize all of them, so I'd recommend keeping this page open.
+
+"Why not just write 35 instead of TICRATE or 65536 instead of FRACUNIT?" You say? Well, what if TICRATE becomes 60 one day? Your code will be inaccurate to the game's update rate! If you just wrote TICRATE, it would have properly updated and kept consistency.

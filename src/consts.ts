@@ -50,5 +50,8 @@ export const SIDEBAR: Sidebar = {
       { text: 'Rawset', link: 'srb2-glossary/en/lua/rawsets' },
       { text: 'Save/Load', link: 'srb2-glossary/en/lua/saveload' },
     ],
+    'Extra': [
+      { text: 'Helpful Links', link: 'srb2-glossary/en/extra/helpfullinks'}
+    ]
   }
 }
