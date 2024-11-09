@@ -124,7 +124,7 @@ player.pflags now includes PF_AUTOBRAKE! If it already had it, the result would 
 
 <h4>A Minor Pitfall:</h4>
 ```
-The & operation is for checking, the | operation is for setting. If you do:
+The OR operation adds the value to you. The AND operation filters the value. If you do:
 
 player.pflags = player.pflags | PF_FLAG1
 
