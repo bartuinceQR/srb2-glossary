@@ -37,9 +37,49 @@ These functions might seem a little overbearing. Try to think of it as a circle 
 
 ### PlayerThink
 
-Similar to MobjThinker, PlayerThink runs once per frame for each player. This code still runs if the player is spectating or dead, so make sure to check for the proper conditions.
+```
+local function PlayerRocket(p)
+    if (p.mo.skin ~= "sonic") then return end
 
-Code example coming soon!
+    --Initialise variables if we haven't already
+    --More modular to do it in a PlayerSpawn hook instead
+    --But that sadly breaks when considering changing skins in MP
+
+    if not (p.rocketcharge) then
+        p.rocketcharge = 0
+        p.rocketlaunched = false
+    end
+
+    --Do nothing if we're grounded, and allow us to rocket again
+    if (P_IsObjectOnGround(p.mo)) then
+        p.rocketlaunched = false
+        p.rocketcharge = 0
+    else
+        --If we're midair and already launched, do not take inputs
+        if not (p.rocketlaunched) then
+            --Create charge by holding Spin
+            if (p.cmd.buttons & BT_SPIN) then
+                p.rocketcharge = $ + 1
+            else
+                --Release if we have enough charge
+                if (p.rocketcharge >= TICRATE / 4) then
+                    p.rocketlaunched = true
+                    p.mo.momz = P_MobjFlip(p.mo) * p.rocketcharge * FRACUNIT
+                end
+            end
+        end
+    end
+end
+
+addHook("PlayerThink", PlayerRocket)
+
+```
+
+Similar to MobjThinker, PlayerThink runs once per frame for each player. This code still runs if the player is spectating or dead, so make sure to check for the proper conditions, such as `p.valid` and `p.mo.valid` (spectators do not possess a p.mo, according to the wiki for example).
+
+This codeblock adds a functionality to the player that allows them to rocket up into the air by holding the Spin button while airborne. It requires them to play as **Sonic**, although this restriction can easily be replaced or removed. Once the player has held the button for at least a quarter of a second (TICRATE / 4), and they release it, they will be sent up into the air depending on the amount of charge they held. The needed variables are created at the start of the code block only if they haven't been initialised already, so that the remainder of the code can function properly. The launching line also checks for the current gravity of the player.
+
+"Being Midair" and "holding spin" combined sounds a lot like it would fit the "JumpSpinSpecial" hook. And indeed, it would be optimal to delegate the starting "trigger" to that hook if you really want to focus on Separation of Concerns. However, that call only triggers once pressed, NOT held, so the actual checks for charge amount and launching should still be done in a continuous loop.
 
 ### ThinkFrame
 
