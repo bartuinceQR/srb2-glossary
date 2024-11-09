@@ -83,9 +83,43 @@ This codeblock adds a functionality to the player that allows them to rocket up 
 
 ### ThinkFrame
 
-Runs once before every other thinker is run. It takes no arguments, and is therefore more useful for situations where you need to run a global counter, or need to iterate over something other than players or mobjs, such as linedefs (Do not do this.). You might have seen some code use ThinkFrame to iterate over all players. That is a relic from 2014, back when `PlayerThink` did not exist yet.
+```
+local globalcounter = 0
 
-Code example coming soon!
+local function GeneralThinker()
+    --iterate over all players
+    for p in players.iterate do
+        --if a player has more than 20 rings, decrease ring count by one
+        --and increase the punishment counter
+        if p.rings > 20 then
+            p.rings = $ - 1
+            globalcounter = $ + 1
+            print(globalcounter)
+        end
+    end
+
+    --if 50 excess rings are collected, kill everyone
+    if (globalcounter > 50) then
+        globalcounter = 0
+        for p in players.iterate do
+            P_DamageMobj(p.mo, nil, nil, 1, DMG_INSTAKILL)
+        end
+    end
+end
+
+addHook("ThinkFrame", GeneralThinker)
+
+-- as globalcounter is not tied to any ingame object, it needs to be synchronised for new joiners manually
+local function SynchCounter(net)
+    globalcounter = net(globalcounter)
+end
+
+addHook("NetVars", SynchCounter)
+```
+
+Runs once before every other thinker is run. It takes no arguments, and is therefore more useful for situations where you need to run a global counter, or need to iterate over all instances of a type of object (players, sectors, skins, etc.). Used to be the de-facto way to get players to do something when Lua was first released, as `PlayerThink` had not been added yet. 
+
+The example code provides a scenario with a global counter, and a check if any player is above 20 rings. If so, their ring count is decreased by 1 every frame, and the counter is increased by 1 every frame. If the counter exceeds 50, every player is killed. The code also shows a brief example of the `NetVars` hook. Without going into too much detail, this hook allows variables that are not tied to any mobj, such as the global counter we defined, to be synchronised properly when a player first joins a netgame.
 
 ### MobjDamage
 
