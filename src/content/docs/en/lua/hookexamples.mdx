@@ -125,7 +125,26 @@ The example code provides a scenario with a global counter, and a check if any p
 
 Ran when a mobj takes damage. If used on a mobj with more than 1 health, you can activate your own invulnerability code, or do something much sillier. Since most enemies die in one hit, this will be frequently used on either bosses or the player. Keep in mind that this works like MobjThinker, you have to define a type at the end of the `addHook` function. If you want it to work for the player, you'd add MT_PLAYER.
 
-Code example coming soon!
+```
+local function CrawlaDenial(mo, inf, src, dmg, dtype)
+    --Blue Crawla just really really hates Fang
+    if (inf.type == MT_PLAYER and inf.skin == "fang") then
+        P_DamageMobj(inf, mo, mo, 1, DMG_NUKE)
+        return true
+    elseif (src.type == MT_PLAYER and src.skin == "fang") then
+        P_DamageMobj(src, mo, mo, 1, DMG_NUKE)
+        return true
+    end
+
+    print("Not Fang? Guess I'll die.")
+
+    return false
+end
+
+addHook("MobjDamage", CrawlaDenial, MT_BLUECRAWLA)
+```
+
+This code overrides the Blue Crawla's damage behaviour, where it reflects all damage done by a player with a Fang skin back at them. The code can return early in the if-condition. In this hook, `return true` means "Override the default behaviour", which means the Crawla will not be damaged. `return false` means "use the default behaviour," where the Crawla will take damage as normal. Keep in mind that `return false` DOES NOT invalidate the code that runs before it, so that print statement will still execute if the Crawla dies.
 
 ### MobjLineCollide
 
