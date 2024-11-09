@@ -154,9 +154,31 @@ Code example coming soon!
 
 ### AbilitySpecial
 
-This code runs whenever you try to press the jump button midair. It is the bread and butter of all character abilities. When you `return true` from this function, it will replace whatever existing ability you gave your character, allowing you to have completely custom abilities.
+Executes whenever you try to press the jump button midair. It is the bread and butter of all character abilities. When you `return true` from this function, it will replace whatever existing ability you gave your character, allowing you to have completely custom abilities.
 
-Code example coming soon!
+```
+local function PlayerAbility(p)
+    if (p.pflags & PF_THOKKED) then
+        return
+    end
+
+    p.pflags = $ | (PF_THOKKED | PF_SPINNING)
+    p.mo.state = S_PLAY_ROLL
+
+
+    P_SpawnThokMobj(p)
+    P_InstaThrust(p.mo, p.mo.angle, -60*FRACUNIT)
+    S_StartSound(p.mo, sfx_thok)
+
+    P_StartQuake(10*FRACUNIT, TICRATE/6)
+
+    return true
+end
+
+addHook("AbilitySpecial", PlayerAbility)
+```
+
+A very simple example that replaces your character's ability with a Thok....that goes backwards. It also shakes the screen a bit. Notice how the `PF_THOKKED` flag is added manually by the code. The `PF_THOKKED` flag, which is more of a general purpose flag to signify that a character has used their ability, prevents you from using your ability midair multiple times. If you `return true` from AbilitySpecial, this flag does not get set on its own, so you have to add it yourself. 
 
 ### JumpSpecial
 
